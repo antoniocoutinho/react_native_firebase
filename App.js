@@ -7,12 +7,13 @@ import {
   View,
   Button
 } from 'react-native';
-
-
-
+//import { EALREADY } from 'constants';
 
 export default class App extends Component{
-  
+  constructor(props){
+    super(props);
+    this.state = {funcionario: ''}
+  }
   componentWillMount(){
       
     // Initialize Firebase
@@ -30,10 +31,25 @@ export default class App extends Component{
 
   salvarDados(){
     var funcionarios  = firebase.database().ref("funcionarios");
-    funcionarios.push().child("nome").set("Antonio")
-    //database.ref("pontuacao").set("888");
+    funcionarios.set("10")
+      /*{
+        nome:"Antonio",
+        idade: "29",
+        peso: "89"
+      }
+    );*/
 
   }
+  
+  listarDados(){
+    var funcionarios =  firebase.database().ref("funcionarios");
+    funcionarios.on('value', (snapshot) => {
+      var dado =  snapshot.val()
+      this.setState({funcionario: dado}) 
+      //alert( snapshot.val());
+    } );
+  }
+  
   removeDados(){
     var database = firebase.database();
     database.ref("funcionarios").remove();
@@ -42,6 +58,7 @@ export default class App extends Component{
   render() {
     return (
       <View>
+        
         <View style={styles.botao}>
           <Button 
             onPress={ () => {this.salvarDados(); }}
@@ -50,6 +67,7 @@ export default class App extends Component{
             accessibilityLabel="Salvar Dados"
           />
         </View>
+        
         <View style={styles.botao}>
           <Button 
             onPress={ () => {this.removeDados(); }}
@@ -58,6 +76,18 @@ export default class App extends Component{
             accessibilityLabel="Remover Dadooos"
           />
         </View>
+
+        
+        <View style={styles.botao}>
+          <Button 
+            onPress={ () => {this.listarDados(); }}
+            title="Listar Dados"
+            color='red'
+            accessibilityLabel="Listar Dados"
+          />
+        </View>
+
+        <Text>{this.state.funcionario}</Text>
       </View>
     );
   }
@@ -65,6 +95,6 @@ export default class App extends Component{
 
 const styles = StyleSheet.create({
   botao: {
-    margin: 30
+    marginTop: 30
   }
 })
